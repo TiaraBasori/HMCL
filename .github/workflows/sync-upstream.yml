@@ -20,24 +20,22 @@ jobs:
       - name: Add upstream remote
         run: |
           git remote add upstream https://github.com/HMCL-dev/HMCL.git
-          git fetch upstream
+          git fetch upstream --no-tags
 
       - name: Configure git
         run: |
           git config user.name "TiaraBasori"
           git config user.email "tiara@basori.dev"
 
-      - name: Attempt merge upstream/main
+      - name: Merge upstream/main
         id: merge
         continue-on-error: true
         run: |
           git checkout main
           if git merge upstream/main --no-edit 2>&1; then
             echo "merge_clean=true" >> $GITHUB_OUTPUT
-            echo "Merge clean — no conflicts."
           else
             echo "merge_clean=false" >> $GITHUB_OUTPUT
-            echo "Merge has conflicts — will attempt auto-resolve."
           fi
 
       - name: Auto-resolve conflicts in our custom files
@@ -64,7 +62,39 @@ jobs:
             echo "$CONFLICTS"
             exit 1
           fi
-          echo "All conflicts resolved."
 
-      - name: Push changes
+      - name: Push main
         run: git push origin main
+
+      - name: Collect upstream release tags
+        id: tags
+        run: |
+          # Get upstream release tags (sorted newest first)
+          UPSTREAM_TAGS=$(git ls-remote --tags upstream 'v*' 2>/dev/null | awk '{print $2}' | sed 's|refs/tags/||' | sort -rV | head -10)
+          NEW_TAGS=""
+          for tag in $UPSTREAM_TAGS; do
+            # Skip if tag already exists in our repo
+            if git rev-parse "refs/tags/$tag" >/dev/null 2>&1; then
+              continue
+            fi
+            # Get upstream commit for this tag
+            UPSTREAM_SHA=$(git ls-remote --tags upstream "$tag" 2>/dev/null | awk '{print $1}')
+            if [ -z "$UPSTREAM_SHA" ]; then
+              continue
+            fi
+            # Check if upstream commit is in our history
+            if git merge-base --is-ancestor "$UPSTREAM_SHA" HEAD 2>/dev/null; then
+              echo "New release tag: $tag ($UPSTREAM_SHA)"
+              NEW_TAGS="$NEW_TAGS $tag"
+            fi
+          done
+          echo "new_tags=${NEW_TAGS}" >> $GITHUB_OUTPUT
+
+      - name: Tag our merged commits for upstream releases
+        if: steps.tags.outputs.new_tags != ''
+        run: |
+          for tag in ${{ steps.tags.outputs.new_tags }}; do
+            echo "Creating tag $tag on our fork"
+            git tag -f "$tag" HEAD
+          done
+          git push origin --tags
