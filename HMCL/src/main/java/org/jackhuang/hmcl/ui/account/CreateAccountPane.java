@@ -103,7 +103,6 @@ public class CreateAccountPane extends JFXDialogLayout implements DialogAware {
                 factory = Accounts.getAccountFactory(preferred);
             } catch (IllegalArgumentException e) {
                 factory = Accounts.FACTORY_OFFLINE;
-                }
             }
         } else {
             showMethodSwitcher = false;
