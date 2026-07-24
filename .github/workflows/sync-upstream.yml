@@ -1,0 +1,74 @@
+name: Sync Upstream
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN || secrets.PAT_TOKEN }}
+
+      - name: Add upstream remote
+        run: |
+          git remote add upstream https://github.com/HMCL-dev/HMCL.git
+          git fetch upstream --no-tags
+
+      - name: Copy patch script
+        run: |
+          mkdir -p /tmp/patches
+          cp -r .github/workflows/patches/* /tmp/patches/
+
+      - name: Configure git
+        run: |
+          git config user.name "TiaraBasori"
+          git config user.email "mintabyss233@gmail.com"
+
+      - name: Reset to upstream/main
+        run: |
+          git checkout main
+          git reset --hard upstream/main
+
+      - name: Apply custom patches - Remove offline account restriction
+        run: |
+          python3 /tmp/patches/apply_patches.py
+
+      - name: Commit custom changes
+        run: |
+          git add HMCL/src/main/java/org/jackhuang/hmcl/ui/account/AccountListPage.java
+          git add HMCL/src/main/java/org/jackhuang/hmcl/setting/Accounts.java
+          git add HMCL/src/main/java/org/jackhuang/hmcl/ui/account/CreateAccountPane.java
+          git commit -m "Remove offline account login restriction (auto-applied after upstream sync)" || echo "No changes to commit"
+
+      - name: Push main
+        run: git push origin main --force
+
+      - name: Collect upstream release tags
+        id: tags
+        run: |
+          git fetch upstream --tags --force 2>/dev/null || true
+          # Get tags that exist in upstream but not in origin
+          upstream_tags=$(git tag -l --merged upstream/main | sort -V)
+          origin_tags=$(git tag -l --merged origin/main | sort -V)
+          new_tags=$(comm -13 <(echo "$origin_tags") <(echo "$upstream_tags"))
+          echo "new_tags<<EOF" >> $GITHUB_OUTPUT
+          echo "$new_tags" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Push new tags
+        if: steps.tags.outputs.new_tags != ''
+        run: |
+          for tag in ${{ steps.tags.outputs.new_tags }}; do
+            echo "Creating tag $tag on our fork"
+            git tag -f "$tag" HEAD
+          done
+          git push origin --tags --force
