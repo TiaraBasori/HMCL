@@ -33,11 +33,29 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Build all platforms
-        run: ./gradlew build -x test --no-daemon
+        run: ./gradlew clean makeExecutables makeDeb -x test --no-daemon
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+      - name: Generate nightly tag
+        id: tag
+        run: |
+          DATE=$(date -u +'%Y%m%d-%H%M')
+          echo "tag=nightly-$DATE" >> $GITHUB_OUTPUT
+          echo "version=3.nightly-$DATE" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: HMCL-nightly
-          path: HMCL/build/libs/*.jar
-          retention-days: 7
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: HMCL Nightly ${{ steps.tag.outputs.version }}
+          body: |
+            Nightly build from commit ${{ github.sha }}
+            Built at $(date -u)
+          draft: false
+          prerelease: true
+          files: |
+            HMCL/build/libs/*.jar
+            HMCL/build/libs/*.exe
+            HMCL/build/libs/*.sh
+            HMCL/build/libs/*.deb
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN || secrets.PAT_TOKEN }}
