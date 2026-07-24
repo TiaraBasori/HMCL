@@ -51,7 +51,6 @@ jobs:
             Nightly build from commit ${{ github.sha }}
             Built at $(date -u)
           draft: false
-          prerelease: true
           files: |
             HMCL/build/libs/*.jar
             HMCL/build/libs/*.exe
