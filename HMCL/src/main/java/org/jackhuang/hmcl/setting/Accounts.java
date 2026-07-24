@@ -22,7 +22,6 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import org.jackhuang.hmcl.Metadata;
 import org.jackhuang.hmcl.auth.*;
@@ -347,34 +346,6 @@ public final class Accounts {
         if (selected == null && !accounts.isEmpty()) {
             selected = accounts.get(0);
         }
-
-        if (!SettingsManager.isUserSettingsReadOnly()
-                && !SettingsManager.userSettings().enableOfflineAccountProperty().get())
-            for (Account account : accounts) {
-                if (account instanceof MicrosoftAccount) {
-                    UserSettings userSettings = userSettings();
-                    userSettings.enableOfflineAccountProperty().set(true);
-                    break;
-                }
-            }
-
-        if (!SettingsManager.isUserSettingsReadOnly()
-                && !SettingsManager.userSettings().enableOfflineAccountProperty().get())
-            accounts.addListener(new ListChangeListener<Account>() {
-                @Override
-                public void onChanged(Change<? extends Account> change) {
-                    while (change.next()) {
-                        for (Account account : change.getAddedSubList()) {
-                            if (account instanceof MicrosoftAccount) {
-                                accounts.removeListener(this);
-                                UserSettings userSettings = userSettings();
-                                userSettings.enableOfflineAccountProperty().set(true);
-                                return;
-                            }
-                        }
-                    }
-                }
-            });
 
         selectedAccount.set(selected);
 
