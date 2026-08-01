@@ -91,6 +91,7 @@ public final class AccountListPage extends DecoratorAnimatedPage implements Deco
     private static class AccountListPageSkin extends DecoratorAnimatedPageSkin<AccountListPage> {
 
         private final ObservableList<AdvancedListItem> authServerItems;
+
         public AccountListPageSkin(AccountListPage skinnable) {
             super(skinnable);
 
@@ -162,6 +163,7 @@ public final class AccountListPage extends DecoratorAnimatedPage implements Deco
                     Bindings.bindContent(boxAuthServers.getChildren(), authServerItems);
 
                     ClassTitle title = new ClassTitle(i18n("account.create").toUpperCase(Locale.ROOT));
+                    boxMethods.getChildren().setAll(title, microsoftItem, offlineItem, boxAuthServers);
                 }
 
                 AdvancedListItem addAuthServerItem = new AdvancedListItem();
