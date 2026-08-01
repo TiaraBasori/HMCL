@@ -51,16 +51,15 @@
      private final ObservableList<AccountListItem> items;
      private final ReadOnlyObjectWrapper<State> state = new ReadOnlyObjectWrapper<>(State.fromTitle(i18n("account.manage")));
      private final ListProperty<Account> accounts = new SimpleListProperty<>(this, "accounts", FXCollections.observableArrayList());
-@@ -116,8 +91,6 @@
+@@ -116,7 +91,6 @@
      private static class AccountListPageSkin extends DecoratorAnimatedPageSkin<AccountListPage> {
  
          private final ObservableList<AdvancedListItem> authServerItems;
 -        private ChangeListener<Boolean> holder;
--
+ 
          public AccountListPageSkin(AccountListPage skinnable) {
              super(skinnable);
- 
-@@ -189,27 +162,6 @@
+@@ -189,27 +163,7 @@
                      Bindings.bindContent(boxAuthServers.getChildren(), authServerItems);
  
                      ClassTitle title = new ClassTitle(i18n("account.create").toUpperCase(Locale.ROOT));
