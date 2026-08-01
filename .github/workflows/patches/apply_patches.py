@@ -12,9 +12,11 @@ def apply_patch(patch_file, target_file):
         return False
     
     try:
+        # Run patch from the repository root
+        repo_root = os.path.dirname(os.path.dirname(os.path.dirname(patch_file)))
         result = subprocess.run([
-            "patch", "-p1", "-i", patch_file, "--input", target_file
-        ], capture_output=True, text=True, cwd=os.path.dirname(target_file) or ".")
+            "patch", "-p1", "-i", os.path.relpath(patch_file, repo_root)
+        ], capture_output=True, text=True, cwd=repo_root)
         
         if result.returncode == 0:
             print(f"Applied {patch_file} to {target_file}")
