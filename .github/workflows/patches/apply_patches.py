@@ -12,8 +12,8 @@ def apply_patch(patch_file, target_file):
         return False
     
     try:
-        # Run patch from the repository root
-        repo_root = os.path.dirname(os.path.dirname(os.path.dirname(patch_file)))
+        # Run patch from the repository root (current working directory)
+        repo_root = os.getcwd()
         rel_patch = os.path.relpath(patch_file, repo_root)
         print(f"Applying patch: {rel_patch} to {target_file}")
         print(f"Working directory: {repo_root}")
