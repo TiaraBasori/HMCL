@@ -15,17 +15,9 @@ def apply_patch(patch_file, target_file):
         # Run patch from the repository root (current working directory)
         repo_root = os.getcwd()
         rel_patch = os.path.relpath(patch_file, repo_root)
-        print(f"Applying patch: {rel_patch} to {target_file}")
-        print(f"Working directory: {repo_root}")
         result = subprocess.run([
             "patch", "-p1", "-i", rel_patch
         ], capture_output=True, text=True, cwd=repo_root)
-        
-        print(f"  Return code: {result.returncode}")
-        if result.stdout:
-            print(f"  Stdout: {result.stdout}")
-        if result.stderr:
-            print(f"  Stderr: {result.stderr}")
         
         if result.returncode == 0:
             print(f"Applied {patch_file} to {target_file}")
@@ -35,8 +27,6 @@ def apply_patch(patch_file, target_file):
             return False
     except Exception as e:
         print(f"Error applying patch: {e}")
-        import traceback
-        traceback.print_exc()
         return False
 
 def main():
