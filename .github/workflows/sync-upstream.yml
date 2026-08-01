@@ -1,0 +1,62 @@
+name: Sync Upstream
+
+on:
+  schedule:
+    - cron: '0 */4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.PAT_TOKEN }}
+
+      - name: Backup custom workflows
+        run: |
+          mkdir -p /tmp/workflows_backup
+          cp .github/workflows/sync-upstream.yml /tmp/workflows_backup/ 2>/dev/null || true
+          cp .github/workflows/nightly-release.yml /tmp/workflows_backup/ 2>/dev/null || true
+          cp -r .github/workflows/patches /tmp/workflows_backup/ 2>/dev/null || true
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Add upstream remote
+        run: git remote add upstream https://github.com/HMCL-dev/HMCL.git || true
+
+      - name: Fetch upstream
+        run: git fetch upstream
+
+      - name: Merge upstream (keep upstream version for conflicts)
+        run: git merge -X theirs upstream/main --no-edit
+
+      - name: Restore custom workflows
+        run: |
+          cp /tmp/workflows_backup/sync-upstream.yml .github/workflows/ 2>/dev/null || true
+          cp /tmp/workflows_backup/nightly-release.yml .github/workflows/ 2>/dev/null || true
+          cp -r /tmp/workflows_backup/patches .github/workflows/ 2>/dev/null || true
+
+      - name: Apply patches
+        run: |
+          python3 .github/workflows/patches/apply_patches.py
+
+      - name: Commit and push
+        run: |
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m "Remove offline account login restriction (auto-applied after upstream sync)"
+            git push origin main --force
+          else
+            echo "No changes to commit"
+          fi
+        env:
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
