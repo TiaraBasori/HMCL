@@ -62,6 +62,7 @@ jobs:
       - name: Create nightly release
         run: |
           TAG="nightly-${{ env.VERSION }}-${{ env.SHORT_SHA }}"
+          gh release delete "$TAG" --yes --cleanup-tag 2>/dev/null || true
           gh release create "$TAG" artifacts/* \
             --title "HMCL Nightly $TAG" \
             --notes "Nightly build from commit ${{ github.sha }}" \
