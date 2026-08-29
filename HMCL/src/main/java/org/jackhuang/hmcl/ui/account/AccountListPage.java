@@ -49,7 +49,6 @@ import org.jackhuang.hmcl.util.javafx.MappedObservableList;
 
 import java.util.Locale;
 
-import static org.jackhuang.hmcl.setting.SettingsManager.userSettings;
 import static org.jackhuang.hmcl.util.i18n.I18n.i18n;
 import static org.jackhuang.hmcl.util.javafx.ExtendedProperties.createSelectedItemPropertyFor;
 import static org.jackhuang.hmcl.util.logging.Logger.LOG;

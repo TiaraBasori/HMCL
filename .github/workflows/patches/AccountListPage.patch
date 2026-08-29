@@ -15,7 +15,7 @@
  import javafx.beans.value.ObservableValue;
  import javafx.collections.FXCollections;
  import javafx.collections.ObservableList;
-@@ -46,7 +43,6 @@
+@@ -46,40 +43,17 @@
  import org.jackhuang.hmcl.ui.construct.ClassTitle;
  import org.jackhuang.hmcl.ui.decorator.DecoratorAnimatedPage;
  import org.jackhuang.hmcl.ui.decorator.DecoratorPage;
@@ -23,7 +23,12 @@
  import org.jackhuang.hmcl.util.io.NetworkUtils;
  import org.jackhuang.hmcl.util.javafx.BindingMapping;
  import org.jackhuang.hmcl.util.javafx.MappedObservableList;
-@@ -59,27 +55,6 @@
+ 
+ import java.util.Locale;
+ 
+-import static org.jackhuang.hmcl.setting.SettingsManager.userSettings;
+ import static org.jackhuang.hmcl.util.i18n.I18n.i18n;
+ import static org.jackhuang.hmcl.util.javafx.ExtendedProperties.createSelectedItemPropertyFor;
  import static org.jackhuang.hmcl.util.logging.Logger.LOG;
  
  public final class AccountListPage extends DecoratorAnimatedPage implements DecoratorPage {
@@ -51,7 +56,7 @@
      private final ObservableList<AccountListItem> items;
      private final ReadOnlyObjectWrapper<State> state = new ReadOnlyObjectWrapper<>(State.fromTitle(i18n("account.manage")));
      private final ListProperty<Account> accounts = new SimpleListProperty<>(this, "accounts", FXCollections.observableArrayList());
-@@ -116,7 +91,6 @@
+@@ -116,7 +90,6 @@
      private static class AccountListPageSkin extends DecoratorAnimatedPageSkin<AccountListPage> {
  
          private final ObservableList<AdvancedListItem> authServerItems;
@@ -59,7 +64,7 @@
  
          public AccountListPageSkin(AccountListPage skinnable) {
              super(skinnable);
-@@ -189,27 +163,7 @@
+@@ -189,27 +162,7 @@
                      Bindings.bindContent(boxAuthServers.getChildren(), authServerItems);
  
                      ClassTitle title = new ClassTitle(i18n("account.create").toUpperCase(Locale.ROOT));
