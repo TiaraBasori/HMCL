@@ -1,4 +1,4 @@
-name: Nightly Release
+name: Release
 
 on:
   schedule:
@@ -60,14 +60,13 @@ jobs:
           done
           cat *.sha256
 
-      - name: Create nightly release
+      - name: Create release
         run: |
-          TAG="nightly-${{ env.VERSION }}-${{ env.SHORT_SHA }}"
+          TAG="${{ env.VERSION }}-${{ env.SHORT_SHA }}"
           gh release delete "$TAG" --yes --cleanup-tag 2>/dev/null || true
           gh release create "$TAG" artifacts/* \
-            --title "HMCL Nightly $TAG" \
-            --notes "Nightly build from commit ${{ github.sha }}" \
-            --prerelease
+            --title "HMCL ${{ env.VERSION }}-${{ env.SHORT_SHA }}" \
+            --notes "HMCL ${{ env.VERSION }} build from commit ${{ github.sha }}"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
