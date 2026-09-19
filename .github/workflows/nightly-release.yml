@@ -50,7 +50,12 @@ jobs:
           cp HMCL/build/libs/HMCL-*.exe artifacts/ 2>/dev/null || true
           cp HMCL/build/libs/HMCL-*.sh artifacts/ 2>/dev/null || true
           cp HMCL/build/libs/HMCL-*.deb artifacts/ 2>/dev/null || true
-          ls -la artifacts/
+          cd artifacts
+          for f in *.unofficial-*; do
+            [ -e "$f" ] || continue
+            mv "$f" "${f/.unofficial/}"
+          done
+          ls -la
 
       - name: Generate checksums
         run: |

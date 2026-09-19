@@ -45,6 +45,10 @@ jobs:
           cp /tmp/workflows_backup/nightly-release.yml .github/workflows/ 2>/dev/null || true
           cp -r /tmp/workflows_backup/patches .github/workflows/ 2>/dev/null || true
 
+      - name: Restore fork README
+        run: |
+          cp /tmp/workflows_backup/patches/README.md README.md 2>/dev/null || true
+
       - name: Reset patched files to upstream version
         run: |
           git checkout upstream/main -- HMCL/src/main/java/org/jackhuang/hmcl/ui/account/AccountListPage.java
@@ -59,9 +63,11 @@ jobs:
           git add -A
           if ! git diff --cached --quiet; then
             git commit -m "Remove offline account login restriction (auto-applied after upstream sync)"
-            git push origin main --force
+          fi
+          if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]; then
+            git push origin main
           else
-            echo "No changes to commit"
+            echo "Already up to date"
           fi
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
