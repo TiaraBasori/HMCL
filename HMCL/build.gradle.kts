@@ -49,7 +49,7 @@ if (buildNumber != null) {
     } else if (isOfficial) {
         "$versionRoot.dev-$shortCommit"
     } else {
-        "$versionRoot.unofficial-$shortCommit"
+        "$versionRoot-$shortCommit"
     }
 }
 
