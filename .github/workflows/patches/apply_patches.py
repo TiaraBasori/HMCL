@@ -35,6 +35,7 @@ def main():
     patches = [
         ("AccountListPage.patch", "HMCL/src/main/java/org/jackhuang/hmcl/ui/account/AccountListPage.java"),
         ("Accounts.patch", "HMCL/src/main/java/org/jackhuang/hmcl/setting/Accounts.java"),
+        ("CreateAccountPane.patch", "HMCL/src/main/java/org/jackhuang/hmcl/ui/account/CreateAccountPane.java"),
     ]
     
     all_success = True
