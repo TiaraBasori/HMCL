@@ -36,6 +36,7 @@ def main():
         ("AccountListPage.patch", "HMCL/src/main/java/org/jackhuang/hmcl/ui/account/AccountListPage.java"),
         ("Accounts.patch", "HMCL/src/main/java/org/jackhuang/hmcl/setting/Accounts.java"),
         ("CreateAccountPane.patch", "HMCL/src/main/java/org/jackhuang/hmcl/ui/account/CreateAccountPane.java"),
+        ("Version.patch", "HMCL/build.gradle.kts"),
     ]
     
     all_success = True
