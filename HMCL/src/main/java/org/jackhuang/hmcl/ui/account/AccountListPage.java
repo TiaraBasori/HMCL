@@ -43,7 +43,6 @@ import org.jackhuang.hmcl.ui.construct.AdvancedListItem;
 import org.jackhuang.hmcl.ui.construct.ClassTitle;
 import org.jackhuang.hmcl.ui.decorator.DecoratorAnimatedPage;
 import org.jackhuang.hmcl.ui.decorator.DecoratorPage;
-import org.jackhuang.hmcl.util.io.NetworkUtils;
 import org.jackhuang.hmcl.util.javafx.BindingMapping;
 import org.jackhuang.hmcl.util.javafx.MappedObservableList;
 
@@ -51,7 +50,6 @@ import java.util.Locale;
 
 import static org.jackhuang.hmcl.util.i18n.I18n.i18n;
 import static org.jackhuang.hmcl.util.javafx.ExtendedProperties.createSelectedItemPropertyFor;
-import static org.jackhuang.hmcl.util.logging.Logger.LOG;
 
 public final class AccountListPage extends DecoratorAnimatedPage implements DecoratorPage {
     private final ObservableList<AccountListItem> items;
@@ -146,13 +144,7 @@ public final class AccountListPage extends DecoratorAnimatedPage implements Deco
 
                         ObservableValue<String> title = BindingMapping.of(server, AuthlibInjectorServer::getName);
                         item.titleProperty().bind(title);
-                        String host = "";
-                        try {
-                            host = NetworkUtils.toURI(server.getUrl()).getHost();
-                        } catch (IllegalArgumentException e) {
-                            LOG.warning("Unparsable authlib-injector server url " + server.getUrl(), e);
-                        }
-                        item.subtitleProperty().set(host);
+                        item.setSubtitle(server.getDisplayHostUrl());
                         Tooltip tooltip = new Tooltip();
                         tooltip.textProperty().bind(Bindings.format("%s (%s)", title, server.getUrl()));
                         FXUtils.installFastTooltip(item, tooltip);
