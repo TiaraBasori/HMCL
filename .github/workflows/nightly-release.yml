@@ -36,7 +36,7 @@ jobs:
           JAVA_TOOL_OPTIONS: -Djava.awt.headless=true
           MICROSOFT_AUTH_ID: ${{ secrets.MICROSOFT_AUTH_ID }}
           CURSEFORGE_API_KEY: ${{ secrets.CURSEFORGE_API_KEY }}
-          VERSION_TYPE: stable
+          VERSION_TYPE: nightly
 
       - name: Get version
         run: |
