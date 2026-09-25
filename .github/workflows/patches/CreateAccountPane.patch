@@ -1,0 +1,28 @@
+diff --git a/HMCL/src/main/java/org/jackhuang/hmcl/ui/account/CreateAccountPane.java b/HMCL/src/main/java/org/jackhuang/hmcl/ui/account/CreateAccountPane.java
+index 4fef10a78..c92627054 100644
+--- a/HMCL/src/main/java/org/jackhuang/hmcl/ui/account/CreateAccountPane.java
++++ b/HMCL/src/main/java/org/jackhuang/hmcl/ui/account/CreateAccountPane.java
+@@ -96,17 +96,12 @@ public class CreateAccountPane extends JFXDialogLayout implements DialogAware {
+ 
+     public CreateAccountPane(AccountFactory<?> factory) {
+         if (factory == null) {
+-            if (AccountListPage.RESTRICTED.get()) {
+-                showMethodSwitcher = false;
+-                factory = Accounts.FACTORY_MICROSOFT;
+-            } else {
+-                showMethodSwitcher = true;
+-                String preferred = settings().preferredLoginTypeProperty().get();
+-                try {
+-                    factory = Accounts.getAccountFactory(preferred);
+-                } catch (IllegalArgumentException e) {
+-                    factory = Accounts.FACTORY_OFFLINE;
+-                }
++            showMethodSwitcher = true;
++            String preferred = settings().preferredLoginTypeProperty().get();
++            try {
++                factory = Accounts.getAccountFactory(preferred);
++            } catch (IllegalArgumentException e) {
++                factory = Accounts.FACTORY_OFFLINE;
+             }
+         } else {
+             showMethodSwitcher = false;
