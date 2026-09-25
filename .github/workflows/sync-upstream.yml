@@ -54,6 +54,7 @@ jobs:
           git checkout upstream/main -- HMCL/src/main/java/org/jackhuang/hmcl/ui/account/AccountListPage.java
           git checkout upstream/main -- HMCL/src/main/java/org/jackhuang/hmcl/setting/Accounts.java
           git checkout upstream/main -- HMCL/src/main/java/org/jackhuang/hmcl/ui/account/CreateAccountPane.java
+          git checkout upstream/main -- HMCL/build.gradle.kts
 
       - name: Apply patches
         run: |
