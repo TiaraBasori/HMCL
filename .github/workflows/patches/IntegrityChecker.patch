@@ -1,0 +1,13 @@
+diff --git a/HMCL/src/main/java/org/jackhuang/hmcl/upgrade/IntegrityChecker.java b/HMCL/src/main/java/org/jackhuang/hmcl/upgrade/IntegrityChecker.java
+index f1785087c..d670bf2bb 100644
+--- a/HMCL/src/main/java/org/jackhuang/hmcl/upgrade/IntegrityChecker.java
++++ b/HMCL/src/main/java/org/jackhuang/hmcl/upgrade/IntegrityChecker.java
+@@ -140,6 +140,7 @@ public final class IntegrityChecker {
+     }
+ 
+     public static boolean isOfficial() {
+-        return isSelfVerified() || (Metadata.GITHUB_SHA != null && Metadata.BUILD_CHANNEL.equals("nightly"));
++        return isSelfVerified() || (Metadata.GITHUB_SHA != null
++                && (Metadata.BUILD_CHANNEL.equals("stable") || Metadata.BUILD_CHANNEL.equals("nightly")));
+     }
+ }
