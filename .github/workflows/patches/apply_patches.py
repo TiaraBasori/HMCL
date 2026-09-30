@@ -36,6 +36,8 @@ def main():
         ("AccountListPage.patch", "HMCL/src/main/java/org/jackhuang/hmcl/ui/account/AccountListPage.java"),
         ("Accounts.patch", "HMCL/src/main/java/org/jackhuang/hmcl/setting/Accounts.java"),
         ("CreateAccountPane.patch", "HMCL/src/main/java/org/jackhuang/hmcl/ui/account/CreateAccountPane.java"),
+        ("MainPage.patch", "HMCL/src/main/java/org/jackhuang/hmcl/ui/main/MainPage.java"),
+        ("IntegrityChecker.patch", "HMCL/src/main/java/org/jackhuang/hmcl/upgrade/IntegrityChecker.java"),
         ("Version.patch", "HMCL/build.gradle.kts"),
     ]
     
