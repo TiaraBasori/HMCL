@@ -8,6 +8,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: release
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -36,7 +40,7 @@ jobs:
           JAVA_TOOL_OPTIONS: -Djava.awt.headless=true
           MICROSOFT_AUTH_ID: ${{ secrets.MICROSOFT_AUTH_ID }}
           CURSEFORGE_API_KEY: ${{ secrets.CURSEFORGE_API_KEY }}
-          VERSION_TYPE: nightly
+          VERSION_TYPE: stable
 
       - name: Get version
         run: |
@@ -47,21 +51,16 @@ jobs:
       - name: Prepare artifacts
         run: |
           mkdir -p artifacts
-          cp HMCL/build/libs/HMCL-*.jar artifacts/ 2>/dev/null || true
-          cp HMCL/build/libs/HMCL-*.exe artifacts/ 2>/dev/null || true
-          cp HMCL/build/libs/HMCL-*.sh artifacts/ 2>/dev/null || true
-          cp HMCL/build/libs/HMCL-*.deb artifacts/ 2>/dev/null || true
-          cd artifacts
-          for f in *.unofficial-*; do
-            [ -e "$f" ] || continue
-            mv "$f" "${f/.unofficial/}"
-          done
-          ls -la
+          cp HMCL/build/libs/HMCL-*.jar artifacts/HMCL.jar
+          cp HMCL/build/libs/HMCL-*.exe artifacts/HMCL.exe
+          cp HMCL/build/libs/HMCL-*.sh artifacts/HMCL.sh
+          cp HMCL/build/libs/HMCL-*.deb artifacts/HMCL.deb
+          ls -la artifacts
 
       - name: Generate checksums
         run: |
           cd artifacts
-          for f in *; do
+          for f in HMCL.jar HMCL.exe HMCL.sh HMCL.deb; do
             sha256sum "$f" > "$f.sha256"
           done
           cat *.sha256
