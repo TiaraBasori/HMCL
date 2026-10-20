@@ -69,6 +69,8 @@ jobs:
           git checkout upstream/main -- HMCL/src/main/java/org/jackhuang/hmcl/ui/main/MainPage.java
           git checkout upstream/main -- HMCL/src/main/java/org/jackhuang/hmcl/upgrade/IntegrityChecker.java
           git checkout upstream/main -- HMCL/build.gradle.kts
+          git checkout upstream/main -- HMCL/src/main/java/org/jackhuang/hmcl/ui/download/VersionsPage.java
+          git checkout upstream/main -- HMCL/src/main/java/org/jackhuang/hmcl/ui/instances/DownloadListPage.java
 
       - name: Fail on unresolved conflicts
         run: |

@@ -39,6 +39,8 @@ def main():
         ("MainPage.patch", "HMCL/src/main/java/org/jackhuang/hmcl/ui/main/MainPage.java"),
         ("IntegrityChecker.patch", "HMCL/src/main/java/org/jackhuang/hmcl/upgrade/IntegrityChecker.java"),
         ("Version.patch", "HMCL/build.gradle.kts"),
+        ("VersionsPage.patch", "HMCL/src/main/java/org/jackhuang/hmcl/ui/download/VersionsPage.java"),
+        ("DownloadListPage.patch", "HMCL/src/main/java/org/jackhuang/hmcl/ui/instances/DownloadListPage.java"),
     ]
     
     all_success = True

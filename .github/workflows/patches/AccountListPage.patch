@@ -1,26 +1,18 @@
-diff --git a/HMCL/src/main/java/org/jackhuang/hmcl/ui/account/AccountListPage.java b/HMCL/src/main/java/org/jackhuang/hmcl/ui/account/AccountListPage.java
-index 72c869ec6..44322d370 100644
 --- a/HMCL/src/main/java/org/jackhuang/hmcl/ui/account/AccountListPage.java
 +++ b/HMCL/src/main/java/org/jackhuang/hmcl/ui/account/AccountListPage.java
-@@ -18,8 +18,11 @@
- package org.jackhuang.hmcl.ui.account;
+@@ -19,7 +19,6 @@
  
  import javafx.beans.binding.Bindings;
--import javafx.beans.property.*;
+ import javafx.beans.property.*;
 -import javafx.beans.value.ChangeListener;
-+import javafx.beans.property.ListProperty;
-+import javafx.beans.property.ObjectProperty;
-+import javafx.beans.property.ReadOnlyObjectProperty;
-+import javafx.beans.property.ReadOnlyObjectWrapper;
-+import javafx.beans.property.SimpleListProperty;
  import javafx.beans.value.ObservableValue;
  import javafx.collections.FXCollections;
  import javafx.collections.ObservableList;
-@@ -40,38 +43,15 @@ import org.jackhuang.hmcl.ui.construct.AdvancedListItem;
+@@ -40,38 +39,15 @@
  import org.jackhuang.hmcl.ui.construct.ClassTitle;
  import org.jackhuang.hmcl.ui.decorator.DecoratorAnimatedPage;
  import org.jackhuang.hmcl.ui.decorator.DecoratorPage;
--import org.jackhuang.hmcl.util.i18n.LocaleUtils;
+-import org.jackhuang.hmcl.util.RegionUtils;
  import org.jackhuang.hmcl.util.javafx.BindingMapping;
  import org.jackhuang.hmcl.util.javafx.MappedObservableList;
  
@@ -37,7 +29,7 @@ index 72c869ec6..44322d370 100644
 -        String property = System.getProperty("hmcl.offline.auth.restricted", "auto");
 -
 -        if ("false".equals(property)
--                || "auto".equals(property) && LocaleUtils.IS_CHINA_MAINLAND
+-                || "auto".equals(property) && RegionUtils.isIsChinaMainlandMachine()
 -                || SettingsManager.userSettings().enableOfflineAccountProperty().get())
 -            RESTRICTED.set(false);
 -        else
@@ -55,7 +47,7 @@ index 72c869ec6..44322d370 100644
      private final ObservableList<AccountListItem> items;
      private final ReadOnlyObjectWrapper<State> state = new ReadOnlyObjectWrapper<>(State.fromTitle(i18n("account.manage")));
      private final ListProperty<Account> accounts = new SimpleListProperty<>(this, "accounts", FXCollections.observableArrayList());
-@@ -108,7 +88,6 @@ public final class AccountListPage extends DecoratorAnimatedPage implements Deco
+@@ -108,7 +84,6 @@
      private static class AccountListPageSkin extends DecoratorAnimatedPageSkin<AccountListPage> {
  
          private final ObservableList<AdvancedListItem> authServerItems;
@@ -63,7 +55,7 @@ index 72c869ec6..44322d370 100644
  
          public AccountListPageSkin(AccountListPage skinnable) {
              super(skinnable);
-@@ -175,27 +154,7 @@ public final class AccountListPage extends DecoratorAnimatedPage implements Deco
+@@ -175,27 +150,7 @@
                      Bindings.bindContent(boxAuthServers.getChildren(), authServerItems);
  
                      ClassTitle title = new ClassTitle(i18n("account.create").toUpperCase(Locale.ROOT));
