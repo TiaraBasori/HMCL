@@ -45,20 +45,21 @@ jobs:
 
       # The fork edits these files; upstream edits them too, so a merge can silently drop
       # a change (upstream wins on conflicts). Fail loudly instead of shipping a broken build.
+      # These markers only exist in upstream, so their presence means the fork change was lost.
       - name: Check fork changes survived the merge
         run: |
           fail=0
-          check() {
+          forbid() {
             if git grep -q "$1" -- "$2"; then
-              echo "OK   $2"
-            else
-              echo "::error::$2 no longer contains '$1' — the fork change was lost in the merge"
+              echo "::error::$2 still contains '$1' — the fork change was lost in the merge"
               fail=1
+            else
+              echo "OK   $2"
             fi
           }
-          check 'boxMethods.getChildren().setAll(title, microsoftItem, offlineItem, boxAuthServers);' 'HMCL/src/main/java/org/jackhuang/hmcl/ui/account/AccountListPage.java'
-          check 'this.getChildren().setAll(root);' 'HMCL/src/main/java/org/jackhuang/hmcl/ui/download/VersionsPage.java'
-          check 'this.getChildren().setAll(pane);' 'HMCL/src/main/java/org/jackhuang/hmcl/ui/instances/DownloadListPage.java'
+          forbid 'RESTRICTED' 'HMCL/src/main/java/org/jackhuang/hmcl/ui/account/AccountListPage.java'
+          forbid 'isIsChinaMainlandNetwork\|download\.china' 'HMCL/src/main/java/org/jackhuang/hmcl/ui/download/VersionsPage.java'
+          forbid 'isIsChinaMainlandNetwork\|download\.china' 'HMCL/src/main/java/org/jackhuang/hmcl/ui/instances/DownloadListPage.java'
           exit $fail
 
       - name: Commit and push
