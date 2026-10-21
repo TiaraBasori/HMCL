@@ -1,6 +1,6 @@
 # HMCL
 
-Hello Minecraft! Launcher 的个人修改版，基于 [HMCL-dev/HMCL](https://github.com/HMCL-dev/HMCL)，移除了离线登录限制，通过 GitHub Actions 自动同步上游并每日构建。
+Hello Minecraft! Launcher 的个人修改版，基于 [HMCL-dev/HMCL](https://github.com/HMCL-dev/HMCL)，移除了离线登录限制，通过 GitHub Actions 每日构建。
 
 ## 下载
 
