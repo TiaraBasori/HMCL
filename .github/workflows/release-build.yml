@@ -17,18 +17,29 @@ jobs:
     runs-on: ubuntu-latest
     env:
       RELEASE_TAG_PREFIX: build
-      FORK_PATCHES: "1"
     steps:
-      - name: Checkout
+      - name: Checkout upstream
         uses: actions/checkout@v6
         with:
+          repository: HMCL-dev/HMCL
+          ref: main
           fetch-depth: 0
+          path: src
 
-      # Build only: the workflow never commits, merges or pushes.
-      # Fork patches are applied to the working tree for this build only and are not kept.
-      - name: Apply fork patches (build only, not committed)
+      - name: Checkout fork configuration
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.ref_name || 'main' }}
+          fetch-depth: 1
+          path: fork
+
+      # Build only: this job never commits, merges or pushes to any repository.
+      # Fork patches live in the fork repo and are applied to the pristine upstream tree.
+      - name: Apply fork patches to the upstream tree
+        working-directory: src
         run: |
-          git show-ref --verify --quiet refs/heads/upstream-main || git fetch --no-tags origin upstream/main:refs/remotes/origin/upstream-main 2>/dev/null || true
+          mkdir -p .github/workflows
+          cp -r ../fork/.github/workflows/patches .github/workflows/
           python3 .github/workflows/patches/apply_patches.py
           git status --short
 
@@ -45,6 +56,7 @@ jobs:
           cache-cleanup: never
 
       - name: Build with Gradle
+        working-directory: src
         run: xvfb-run --auto-servernum ./gradlew build --no-daemon --parallel
         env:
           JAVA_TOOL_OPTIONS: -Djava.awt.headless=true
@@ -53,6 +65,7 @@ jobs:
           VERSION_TYPE: stable
 
       - name: Get version
+        working-directory: src
         run: |
           VERSION=$(./gradlew properties --no-daemon -q | grep "^version:" | cut -d' ' -f2)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
@@ -61,10 +74,10 @@ jobs:
       - name: Prepare artifacts
         run: |
           mkdir -p artifacts
-          cp HMCL/build/libs/HMCL-*.jar artifacts/HMCL.jar
-          cp HMCL/build/libs/HMCL-*.exe artifacts/HMCL.exe
-          cp HMCL/build/libs/HMCL-*.sh artifacts/HMCL.sh
-          cp HMCL/build/libs/HMCL-*.deb artifacts/HMCL.deb
+          cp src/HMCL/build/libs/HMCL-*.jar artifacts/HMCL.jar
+          cp src/HMCL/build/libs/HMCL-*.exe artifacts/HMCL.exe
+          cp src/HMCL/build/libs/HMCL-*.sh artifacts/HMCL.sh
+          cp src/HMCL/build/libs/HMCL-*.deb artifacts/HMCL.deb
           ls -la artifacts
 
       - name: Generate checksums
@@ -81,6 +94,6 @@ jobs:
           gh release delete "$TAG" --yes --cleanup-tag 2>/dev/null || true
           gh release create "$TAG" artifacts/* \
             --title "HMCL ${{ env.VERSION }}-${{ env.SHORT_SHA }}" \
-            --notes "HMCL ${{ env.VERSION }} build from commit ${{ github.sha }}. Fork patches under .github/workflows/patches are applied in the build workspace only; the repository is not modified."
+            --notes "HMCL ${{ env.VERSION }} built from HMCL-dev/HMCL@${{ github.sha }} with the fork patches applied in the build workspace only. The repository is not modified."
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
